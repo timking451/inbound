@@ -1,4 +1,4 @@
-#Inbound scanning for hardware store
+#Inbound scanning for hardware store.
 
 # Import dependencies
 import time
