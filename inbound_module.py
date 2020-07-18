@@ -6,9 +6,6 @@ def formatting():
     mcrdf['Count'] = ""
     mcrdf['OK'] = ""
     mcrdf = mcrdf.sort_values(by=['Deliverable Unit'], ascending=False)
-    # Create other dataframes for later reporting
-    dfshorts = pd.DataFrame(columns=mcrdf.columns)
-    dfovers = pd.DataFrame(columns=mcrdf.columns)
 
 def get_counts():
     # c is a Counter object, counting occurences of each UPC in scanned_items

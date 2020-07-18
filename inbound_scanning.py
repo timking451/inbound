@@ -23,15 +23,8 @@ while True:
     scanned = input()
     scanned = scanned.lstrip('0')
     if scanned == 'help':
-        print('''\tEnter 'short' to generate a shortage report.
-        Enter 'over' to generate an overage report.
-        Enter 'exit' to exit this awesome program.''')
-        continue
-    if scanned == 'over':
-        overage_report()
-        continue
-    if scanned == 'short':
-        shortage_report()
+        print("There will be a help menu as soon as this program is complicated")
+        print("enough to warrant one.")
         continue
     if scanned == 'exit':
         break
