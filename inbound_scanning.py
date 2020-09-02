@@ -28,7 +28,7 @@ while True:
     else:
         try:
             scanned_items.append(scanned)
-            a = df[df['UPC'] == scanned]
+            a = df.loc[df.index[df['UPC'] == scanned]].transpose()
             print(a)
             print(f"Item count: {scanned_items.count(scanned)}")
         except ValueError:
@@ -52,7 +52,7 @@ for ind in df.index:
     elif df['OrderQty'][ind] < df['Count'][ind]:
         df['OK'][ind] = "OVER"
     else:
-        df['OK'][ind] = "OK" 
+        df['OK'][ind] = "OK"
 
 #Export one big excel file with filters and formatting
 df = df.drop(df[df['OK'] == 'OK'].index)
