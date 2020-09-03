@@ -58,6 +58,8 @@ while True:
             a = df.loc[df.index[df['UPC'] == scanned]].transpose()
             pprint.pprint(a)
             #print(f"Item count: {scanned_items.count(scanned)}")
+            if len(scanned_items)%5 == 0:
+                save_scans(scanned_items)
         except ValueError:
             print("That item is not expected.")
             overs.append(scanned)
