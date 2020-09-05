@@ -6,6 +6,7 @@ import pandas as pd
 import re
 import shelve
 import pprint
+#from playsound import playsound
 
 def save_scans(data):
     shelfFile = shelve.open('scanned_items')
@@ -31,7 +32,7 @@ scanned_items = []
 #Most common loop is scanning items.
 #Also accepts inputs for report generation, etc.
 while True:
-    print('Please scan an item. Enter "help" to for more options.')
+    print('Please scan an item. Enter "help" for more options.')
     scanned = input()
     scanned = scanned.lstrip('0')
     if scanned == 'exit':
@@ -60,9 +61,9 @@ while True:
             #print(f"Item count: {scanned_items.count(scanned)}")
             if len(scanned_items)%5 == 0:
                 save_scans(scanned_items)
+            #playsound('beep.wav')
         except ValueError:
             print("That item is not expected.")
-            overs.append(scanned)
 
 # This is how you iterate over a dataframe.
 # Don't forget to use the .index on your dataframe when initializing
