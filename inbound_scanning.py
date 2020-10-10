@@ -8,15 +8,6 @@ import shelve
 import pprint
 #from playsound import playsound
 
-def save_scans(data):
-    shelfFile = shelve.open('scanned_items')
-    shelfFile['scanned_items'] = data
-    shelfFile.close()
-
-def load_scans():
-    shelfFile = shelve.open('scanned_items')
-    return shelfFile['scanned_items']
-
 # Create and format the dataframe
 df = pd.read_csv("MasterCrossReference.txt")
 df['OrderQty'] = df['OrderQty'].astype(int)
@@ -28,6 +19,33 @@ df = df.sort_values(by=['Deliverable Unit'], ascending=False)
 # Create empty list for UPC scans
 scanned_items = []
 
+
+def save_scans(data):
+    shelfFile = shelve.open('scanned_items')
+    shelfFile['scanned_items'] = data
+    shelfFile.close()
+
+def load_scans():
+    shelfFile = shelve.open('scanned_items')
+    return shelfFile['scanned_items']
+
+def tote_report():
+    df = df.drop(df[df['OK'] == 'OK'].index)
+    df['UPC'] = ''
+    df.sort_values(by=['OK'])
+    tote = re.compile(r'^T')
+    df = df[df['Deliverable Unit'].str.match(tote) == True]
+    df.to_excel('tote_report.xlsx') 
+
+def opti_report():
+    df = df.drop(df[df['OK'] == 'OK'].index)
+    df['UPC'] = ''
+    df.sort_values(by=['OK'])
+    opti = re.compile(r'^\d')
+    df = df[df['Deliverable Unit'].str.match(opti) == True]
+    df.to_excel('opti_report.xlsx') 
+
+
 #Basic interface decision tree.
 #Most common loop is scanning items.
 #Also accepts inputs for report generation, etc.
@@ -37,14 +55,17 @@ while True:
     scanned = scanned.lstrip('0')
     if scanned == 'exit':
         break
-    elif scanned == 'save':
-        save_scans(scanned_items)
     elif scanned == 'load':
         scanned_items = load_scans()
+    elif scanned == 'totes':
+        tote_report()
+    elif scanned == 'optis':
+        opti_report()
     elif scanned == 'help':
-        print("'save': Save the current state of the scanned items list")
         print("'load': Load the previously saved scanned items list")
-        print("'exit': Terminte the program and generate the tote report")
+        print("'totes': Generate the totes report")
+        print("'optis': Generate the optis report")
+        print("'exit': Exit the program")
     else:
         try:
             scanned_items.append(scanned)
@@ -77,9 +98,5 @@ for ind in df.index:
         df['OK'][ind] = "OK"
 
 #Export one big excel file with filters and formatting
-df = df.drop(df[df['OK'] == 'OK'].index)
-df['UPC'] = ''
-df.sort_values(by=['OK'])
-tote = re.compile(r'^T')
-df = df[df['Deliverable Unit'].str.match(tote) == True]
-df.to_excel('report.xlsx')
+
+
