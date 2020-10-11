@@ -19,7 +19,15 @@ df = df.sort_values(by=['Deliverable Unit'], ascending=False)
 # Create empty list for UPC scans
 scanned_items = []
 
-
+def short_over(df):
+    for ind in df.index:
+        if df['OrderQty'][ind] > df['Count'][ind]:
+            df['OK'][ind] = "SHORT"
+        elif df['OrderQty'][ind] < df['Count'][ind]:
+            df['OK'][ind] = "OVER"
+        else:
+            df['OK'][ind] = "OK"
+            
 def save_scans(data):
     shelfFile = shelve.open('scanned_items')
     shelfFile['scanned_items'] = data
@@ -30,6 +38,7 @@ def load_scans():
     return shelfFile['scanned_items']
 
 def tote_report(df):
+    short_over(df)
     df = df.drop(df[df['OK'] == 'OK'].index)
     df['UPC'] = ''
     df.sort_values(by=['OK'])
@@ -38,6 +47,7 @@ def tote_report(df):
     df.to_excel('tote_report.xlsx') 
 
 def opti_report(df):
+    short_over(df)
     df = df.drop(df[df['OK'] == 'OK'].index)
     df['UPC'] = ''
     df.sort_values(by=['OK'])
@@ -81,20 +91,14 @@ while True:
             pprint.pprint(a)
             #print(f"Item count: {scanned_items.count(scanned)}")
             save_scans(scanned_items)
-            #playsound('beep.wav')
+            print('\a')
         except ValueError:
             print("That item is not expected.")
 
 # This is how you iterate over a dataframe.
 # Don't forget to use the .index on your dataframe when initializing
 # the for loop.
-for ind in df.index:
-    if df['OrderQty'][ind] > df['Count'][ind]:
-        df['OK'][ind] = "SHORT"
-    elif df['OrderQty'][ind] < df['Count'][ind]:
-        df['OK'][ind] = "OVER"
-    else:
-        df['OK'][ind] = "OK"
+
 
 #Export one big excel file with filters and formatting
 
