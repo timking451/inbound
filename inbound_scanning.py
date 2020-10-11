@@ -29,7 +29,7 @@ def load_scans():
     shelfFile = shelve.open('scanned_items')
     return shelfFile['scanned_items']
 
-def tote_report():
+def tote_report(df):
     df = df.drop(df[df['OK'] == 'OK'].index)
     df['UPC'] = ''
     df.sort_values(by=['OK'])
@@ -37,7 +37,7 @@ def tote_report():
     df = df[df['Deliverable Unit'].str.match(tote) == True]
     df.to_excel('tote_report.xlsx') 
 
-def opti_report():
+def opti_report(df):
     df = df.drop(df[df['OK'] == 'OK'].index)
     df['UPC'] = ''
     df.sort_values(by=['OK'])
@@ -58,9 +58,9 @@ while True:
     elif scanned == 'load':
         scanned_items = load_scans()
     elif scanned == 'totes':
-        tote_report()
+        tote_report(df)
     elif scanned == 'optis':
-        opti_report()
+        opti_report(df)
     elif scanned == 'help':
         print("'load': Load the previously saved scanned items list")
         print("'totes': Generate the totes report")
@@ -80,8 +80,7 @@ while True:
             a = df.loc[df.index[df['UPC'] == scanned]].transpose()
             pprint.pprint(a)
             #print(f"Item count: {scanned_items.count(scanned)}")
-            if len(scanned_items)%5 == 0:
-                save_scans(scanned_items)
+            save_scans(scanned_items)
             #playsound('beep.wav')
         except ValueError:
             print("That item is not expected.")
