@@ -33,11 +33,12 @@ while True:
     elif scanned == "optis":
         opti_report(df)
     elif scanned == "help":
-        print("'load': Load the previously saved scanned items list")
-        print("'totes': Generate the totes report")
-        print("'optis': Generate the optis report")
-        print("'check': Check on the status of an item without recording the scan")
-        print("'exit': Exit the program")
+        print("'load':   Load the previously saved scanned items list")
+        print("'totes':  Generate the totes report")
+        print("'optis':  Generate the optis report")
+        print("'check':  Check on the status of an item without recording the scan")
+        print("'undo':   Remove the most recently scanned item")
+        print("'exit':   Exit the program")
     elif scanned == "check":
         print("Please scan the item you wish to check")
         check = input()
@@ -46,7 +47,9 @@ while True:
         print("Here's what I know about that item:")
         print_count(check, scanned_items, df)
         print("*************************************")
-
+    elif scanned == "undo":
+        scanned_items.pop()
+        print("Item removed")    
     else:
         try:
             scanned_items.append(scanned)
