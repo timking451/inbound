@@ -36,21 +36,21 @@ while True:
         print("'load': Load the previously saved scanned items list")
         print("'totes': Generate the totes report")
         print("'optis': Generate the optis report")
+        print("'check': Check on the status of an item without recording the scan")
         print("'exit': Exit the program")
+    elif scanned == "check":
+        print("Please scan the item you wish to check")
+        check = input()
+        check = check.lstrip("0")
+        print("*************************************")
+        print("Here's what I know about that item:")
+        print_count(check, scanned_items, df)
+        print("*************************************")
+
     else:
         try:
             scanned_items.append(scanned)
-            # df['Count'][df['UPC'] == scanned] = scanned_items.count(scanned)
-            # c is a Counter object, counting occurences of each UPC in scanned_items
-            # it is a dictionary with the UPC as the key and the count as the value
-            c = col.Counter(scanned_items)
-            # MAP the c values onto the Count column
-            df["Count"] = df["UPC"].map(c)
-            # Reset everything to strings to help with later equivalency tests
-            df = df.astype(str)
-            a = df.loc[df.index[df["UPC"] == scanned]].transpose()
-            pprint.pprint(a)
-            # print(f"Item count: {scanned_items.count(scanned)}")
+            print_count(scanned, scanned_items, df)
             save_scans(scanned_items)
             print("\a")
         except ValueError:

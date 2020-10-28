@@ -1,4 +1,5 @@
 import shelve, re
+import collections as cl
 
 def short_over(df):
     for ind in df.index:
@@ -35,4 +36,17 @@ def opti_report(df):
     opti = re.compile(r'^\d')
     df = df[df['Deliverable Unit'].str.match(opti) == True]
     df.to_excel('opti_report.xlsx') 
+
+def print_count(scanned, scanned_items, df):
+    # df['Count'][df['UPC'] == scanned] = scanned_items.count(scanned)
+    # c is a Counter object, counting occurences of each UPC in scanned_items
+    # it is a dictionary with the UPC as the key and the count as the value
+    c = cl.Counter(scanned_items)
+    # MAP the c values onto the Count column
+    df["Count"] = df["UPC"].map(c)
+    # Reset everything to strings to help with later equivalency tests
+    df = df.astype(str)
+    a = df.loc[df.index[df["UPC"] == scanned]].transpose()
+    print(a)
+    # print(f"Item count: {scanned_items.count(scanned)}")
 
