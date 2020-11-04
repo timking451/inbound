@@ -30,6 +30,14 @@ def load_scans():
     return shelfFile['scanned_items']
 
 def tote_report():
+    for ind in df.index:
+        if df['OrderQty'][ind] > df['Count'][ind]:
+            df['OK'][ind] = "SHORT"
+        elif df['OrderQty'][ind] < df['Count'][ind]:
+            df['OK'][ind] = "OVER"
+        else:
+            df['OK'][ind] = "OK"
+
     df = df.drop(df[df['OK'] == 'OK'].index)
     df['UPC'] = ''
     df.sort_values(by=['OK'])
@@ -38,6 +46,14 @@ def tote_report():
     df.to_excel('tote_report.xlsx') 
 
 def opti_report():
+    for ind in df.index:
+        if df['OrderQty'][ind] > df['Count'][ind]:
+            df['OK'][ind] = "SHORT"
+        elif df['OrderQty'][ind] < df['Count'][ind]:
+            df['OK'][ind] = "OVER"
+        else:
+            df['OK'][ind] = "OK"
+
     df = df.drop(df[df['OK'] == 'OK'].index)
     df['UPC'] = ''
     df.sort_values(by=['OK'])
