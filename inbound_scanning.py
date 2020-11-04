@@ -93,6 +93,8 @@ while True:
         print("'load': Load the previously saved scanned items list")
         print("'totes': Generate the totes report")
         print("'optis': Generate the optis report")
+        print("'check': Check the status of an item")
+        print("'undo': Remove the most recently scanned item")
         print("'exit': Exit the program")
     else:
         try:
