@@ -77,6 +77,18 @@ while True:
         tote_report()
     elif scanned == 'optis':
         opti_report()
+    elif scanned == "check":
+        print("Please scan the item you wish to check")
+        check = input()
+        check = check.lstrip("0")
+        print("*************************************")
+        print("Here's what I know about that item:")
+        a = df.loc[df.index[df['UPC'] == scanned]].transpose()
+        pprint.pprint(a)
+        print("*************************************")
+    elif scanned == "undo":
+        scanned_items.pop()
+        print("Item removed")    
     elif scanned == 'help':
         print("'load': Load the previously saved scanned items list")
         print("'totes': Generate the totes report")
