@@ -29,7 +29,7 @@ def load_scans():
     shelfFile = shelve.open('scanned_items')
     return shelfFile['scanned_items']
 
-def tote_report():
+def tote_report(df):
     for ind in df.index:
         if df['OrderQty'][ind] > df['Count'][ind]:
             df['OK'][ind] = "SHORT"
@@ -45,7 +45,7 @@ def tote_report():
     df = df[df['Deliverable Unit'].str.match(tote) == True]
     df.to_excel('tote_report.xlsx') 
 
-def opti_report():
+def opti_report(df):
     for ind in df.index:
         if df['OrderQty'][ind] > df['Count'][ind]:
             df['OK'][ind] = "SHORT"
@@ -74,16 +74,19 @@ while True:
     elif scanned == 'load':
         scanned_items = load_scans()
     elif scanned == 'totes':
-        tote_report()
+        tote_report(df)
     elif scanned == 'optis':
-        opti_report()
+        opti_report(df)
     elif scanned == "check":
         print("Please scan the item you wish to check")
         check = input()
         check = check.lstrip("0")
+        c = col.Counter(scanned_items)
+        # MAP the c values onto the Count column
+        df['Count'] = df['UPC'].map(c)
         print("*************************************")
         print("Here's what I know about that item:")
-        a = df.loc[df.index[df['UPC'] == scanned]].transpose()
+        a = df.loc[df.index[df['UPC'] == check]].transpose()
         pprint.pprint(a)
         print("*************************************")
     elif scanned == "undo":
