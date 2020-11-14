@@ -77,18 +77,18 @@ while True:
         tote_report(df)
     elif scanned == 'optis':
         opti_report(df)
-    elif scanned == "check":
-        print("Please scan the item you wish to check")
-        check = input()
-        check = check.lstrip("0")
-        c = col.Counter(scanned_items)
-        # MAP the c values onto the Count column
-        df['Count'] = df['UPC'].map(c)
-        print("*************************************")
-        print("Here's what I know about that item:")
-        a = df.loc[df.index[df['UPC'] == check]].transpose()
-        pprint.pprint(a)
-        print("*************************************")
+#    elif scanned == "check":
+#        print("Please scan the item you wish to check")
+#        check = input()
+#        check = check.lstrip("0")
+#        c = col.Counter(scanned_items)
+#        # MAP the c values onto the Count column
+#        df['Count'] = df['UPC'].map(c)
+#        print("*************************************")
+#        print("Here's what I know about that item:")
+#        a = df.loc[df.index[df['UPC'] == check]].transpose()
+#        pprint.pprint(a)
+#        print("*************************************")
     elif scanned == "undo":
         scanned_items.pop()
         print("Item removed")    
@@ -96,7 +96,7 @@ while True:
         print("'load': Load the previously saved scanned items list")
         print("'totes': Generate the totes report")
         print("'optis': Generate the optis report")
-        print("'check': Check the status of an item")
+#        print("'check': Check the status of an item")
         print("'undo': Remove the most recently scanned item")
         print("'exit': Exit the program")
     else:
