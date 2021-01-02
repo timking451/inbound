@@ -6,15 +6,20 @@ import pandas as pd
 import re
 import shelve
 import pprint
+import os
 #from playsound import playsound
 
+os.system("rclone copy dropbox:inbound ~/dropbox")
+
 # Create and format the dataframe
-df = pd.read_csv("MasterCrossReference.txt")
+df = pd.read_csv("~/dropbox/MasterCrossReference.txt")
 df['OrderQty'] = df['OrderQty'].astype(int)
 df = df.astype(str)
 df['Count'] = ""
 df['OK'] = "---"
 df = df.sort_values(by=['Deliverable Unit'], ascending=False)
+
+os.system("^C")
 
 # Create empty list for UPC scans
 scanned_items = []
@@ -43,7 +48,8 @@ def tote_report(df):
     df.sort_values(by=['OK'])
     tote = re.compile(r'^T')
     df = df[df['Deliverable Unit'].str.match(tote) == True]
-    df.to_excel('tote_report.xlsx') 
+    df.to_excel('~/dropbox/tote_report.xlsx') 
+    os.system("rclone copy ~/dropbox dropbox:inbound")
 
 def opti_report(df):
     for ind in df.index:
@@ -59,8 +65,8 @@ def opti_report(df):
     df.sort_values(by=['OK'])
     opti = re.compile(r'^\d')
     df = df[df['Deliverable Unit'].str.match(opti) == True]
-    df.to_excel('opti_report.xlsx') 
-
+    df.to_excel('~/dropbox/opti_report.xlsx') 
+    os.system("rclone copy ~/dropbox dropbox:inbound")
 
 #Basic interface decision tree.
 #Most common loop is scanning items.
