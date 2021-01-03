@@ -35,37 +35,39 @@ def load_scans():
     return shelfFile['scanned_items']
 
 def tote_report(df):
-    for ind in df.index:
-        if df['OrderQty'][ind] > df['Count'][ind]:
-            df['OK'][ind] = "SHORT"
-        elif df['OrderQty'][ind] < df['Count'][ind]:
-            df['OK'][ind] = "OVER"
+    df_tote = df
+    for ind in df_tote.index:
+        if df_tote['OrderQty'][ind] > df_tote['Count'][ind]:
+            df_tote['OK'][ind] = "SHORT"
+        elif df_tote['OrderQty'][ind] < df_tote['Count'][ind]:
+            df_tote['OK'][ind] = "OVER"
         else:
-            df['OK'][ind] = "OK"
+            df_tote['OK'][ind] = "OK"
 
-    df = df.drop(df[df['OK'] == 'OK'].index)
-    df['UPC'] = ''
-    df.sort_values(by=['OK'])
+    df_tote = df_tote.drop(df_tote[df_tote['OK'] == 'OK'].index)
+    df_tote['UPC'] = ''
+    df_tote.sort_values(by=['OK'])
     tote = re.compile(r'^T')
-    df = df[df['Deliverable Unit'].str.match(tote) == True]
-    df.to_excel('~/dropbox/tote_report.xlsx') 
+    df_tote = df_tote[df_tote['Deliverable Unit'].str.match(tote) == True]
+    df_tote.to_excel('~/dropbox/tote_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
 
 def opti_report(df):
-    for ind in df.index:
-        if df['OrderQty'][ind] > df['Count'][ind]:
-            df['OK'][ind] = "SHORT"
-        elif df['OrderQty'][ind] < df['Count'][ind]:
-            df['OK'][ind] = "OVER"
+    df_opti = df
+    for ind in df_opti.index:
+        if df_opti['OrderQty'][ind] > df_opti['Count'][ind]:
+            df_opti['OK'][ind] = "SHORT"
+        elif df_opti['OrderQty'][ind] < df_opti['Count'][ind]:
+            df_opti['OK'][ind] = "OVER"
         else:
-            df['OK'][ind] = "OK"
+            df_opti['OK'][ind] = "OK"
 
-    df = df.drop(df[df['OK'] == 'OK'].index)
-    df['UPC'] = ''
-    df.sort_values(by=['OK'])
+    df_opti = df_opti.drop(df_opti[df_opti['OK'] == 'OK'].index)
+    df_opti['UPC'] = ''
+    df_opti.sort_values(by=['OK'])
     opti = re.compile(r'^\d')
-    df = df[df['Deliverable Unit'].str.match(opti) == True]
-    df.to_excel('~/dropbox/opti_report.xlsx') 
+    df_opti = df_opti[df_opti['Deliverable Unit'].str.match(opti) == True]
+    df_opti.to_excel('~/dropbox/opti_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
 
 #Basic interface decision tree.
