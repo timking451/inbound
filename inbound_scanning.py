@@ -23,7 +23,7 @@ os.system("^C") # Is this really necessary?
 
 scanned_items = [] # Create empty list for UPC scans
 
-def main():
+def main(df, scanned_items):
     #Basic interface decision tree.
     while True:
         print('Please scan an item. Enter "help" for more options.')
@@ -138,6 +138,6 @@ def opti_report(df):
     os.system("rclone copy ~/dropbox dropbox:inbound")
 
 if __name__ == "__main__":
-    main()
+    main(df, scanned_items)
 
 
