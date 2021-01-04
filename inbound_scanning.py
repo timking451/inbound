@@ -36,19 +36,20 @@ def main(df, scanned_items):
         elif scanned == 'totes':
             tote_report(df)
         elif scanned == 'optis':
-            opti_report(df)
-    #    elif scanned == "check":
-    #        print("Please scan the item you wish to check")
-    #        check = input()
-    #        check = check.lstrip("0")
-    #        c = col.Counter(scanned_items)
-    #        # MAP the c values onto the Count column
-    #        df['Count'] = df['UPC'].map(c)
-    #        print("*************************************")
-    #        print("Here's what I know about that item:")
-    #        a = df.loc[df.index[df['UPC'] == check]].transpose()
-    #        pprint.pprint(a)
-    #        print("*************************************")
+            opti_report(df)    
+        elif scanned == "check":
+            check(df, scanned_items)
+            #print("Please scan the item you wish to check")
+            #check = input()
+            #check = check.lstrip("0")
+            #c = col.Counter(scanned_items)
+            # # MAP the c values onto the Count column
+            #df['Count'] = df['UPC'].map(c)
+            #print("*************************************")
+            #print("Here's what I know about that item:")
+            #a = df.loc[df.index[df['UPC'] == check]].transpose()
+            #pprint.pprint(a)
+            #print("*************************************")
         elif scanned == "undo":
             scanned_items.pop()
             print("Item removed")    
@@ -101,8 +102,22 @@ def load_scans():
     shelfFile = shelve.open('scanned_items')
     return shelfFile['scanned_items']
 
+def check(df, scanned_items):
+    df_check = df.copy(deep=True)
+    print("Please scan the item you wish to check")
+    check = input()
+    check = check.lstrip("0")
+    c = col.Counter(scanned_items)
+    # MAP the c values onto the Count column
+    df_check['Count'] = df_check['UPC'].map(c)
+    print("*************************************")
+    print("Here's what I know about that item:")
+    a = df_check.loc[df_check.index[df_check['UPC'] == check]].transpose()
+    pprint.pprint(a)
+    print("*************************************")
+
 def tote_report(df):
-    df_tote = df
+    df_tote = df.copy(deep=True)
     for ind in df_tote.index:
         if df_tote['OrderQty'][ind] > df_tote['Count'][ind]:
             df_tote['OK'][ind] = "SHORT"
@@ -120,7 +135,7 @@ def tote_report(df):
     os.system("rclone copy ~/dropbox dropbox:inbound")
 
 def opti_report(df):
-    df_opti = df
+    df_opti = df.copy(deep=True)
     for ind in df_opti.index:
         if df_opti['OrderQty'][ind] > df_opti['Count'][ind]:
             df_opti['OK'][ind] = "SHORT"
