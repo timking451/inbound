@@ -6,15 +6,20 @@ import pandas as pd
 import re
 import shelve
 import pprint
+import os
 #from playsound import playsound
 
+os.system("rclone copy dropbox:inbound ~/dropbox")
+
 # Create and format the dataframe
-df = pd.read_csv("MasterCrossReference.txt")
+df = pd.read_csv("~/dropbox/MasterCrossReference.txt")
 df['OrderQty'] = df['OrderQty'].astype(int)
 df = df.astype(str)
 df['Count'] = ""
 df['OK'] = "---"
 df = df.sort_values(by=['Deliverable Unit'], ascending=False)
+
+os.system("^C")
 
 # Create empty list for UPC scans
 scanned_items = []
@@ -31,7 +36,7 @@ def load_scans():
 
 def tote_report(df):
     for ind in df.index:
-        if df['OrderQty'][ind].astype(int) > df['Count'][ind]:
+        if df['OrderQty'][ind] > df['Count'][ind]:
             df['OK'][ind] = "SHORT"
         elif df['OrderQty'][ind] < df['Count'][ind]:
             df['OK'][ind] = "OVER"
@@ -43,7 +48,8 @@ def tote_report(df):
     df.sort_values(by=['OK'])
     tote = re.compile(r'^T')
     df = df[df['Deliverable Unit'].str.match(tote) == True]
-    df.to_excel('tote_report.xlsx') 
+    df.to_excel('~/dropbox/tote_report.xlsx') 
+    os.system("rclone copy ~/dropbox dropbox:inbound")
 
 def opti_report(df):
     for ind in df.index:
@@ -59,8 +65,8 @@ def opti_report(df):
     df.sort_values(by=['OK'])
     opti = re.compile(r'^\d')
     df = df[df['Deliverable Unit'].str.match(opti) == True]
-    df.to_excel('opti_report.xlsx') 
-
+    df.to_excel('~/dropbox/opti_report.xlsx') 
+    os.system("rclone copy ~/dropbox dropbox:inbound")
 
 #Basic interface decision tree.
 #Most common loop is scanning items.
@@ -77,18 +83,18 @@ while True:
         tote_report(df)
     elif scanned == 'optis':
         opti_report(df)
-    elif scanned == "check":
-        print("Please scan the item you wish to check")
-        check = input()
-        check = check.lstrip("0")
-        c = col.Counter(scanned_items)
-        # MAP the c values onto the Count column
-        df['Count'] = df['UPC'].map(c).astype(int)
-        print("*************************************")
-        print("Here's what I know about that item:")
-        a = df.loc[df.index[df['UPC'] == check]].transpose()
-        pprint.pprint(a)
-        print("*************************************")
+#    elif scanned == "check":
+#        print("Please scan the item you wish to check")
+#        check = input()
+#        check = check.lstrip("0")
+#        c = col.Counter(scanned_items)
+#        # MAP the c values onto the Count column
+#        df['Count'] = df['UPC'].map(c)
+#        print("*************************************")
+#        print("Here's what I know about that item:")
+#        a = df.loc[df.index[df['UPC'] == check]].transpose()
+#        pprint.pprint(a)
+#        print("*************************************")
     elif scanned == "undo":
         scanned_items.pop()
         print("Item removed")    
@@ -96,7 +102,7 @@ while True:
         print("'load': Load the previously saved scanned items list")
         print("'totes': Generate the totes report")
         print("'optis': Generate the optis report")
-        print("'check': Check the status of an item")
+#        print("'check': Check the status of an item")
         print("'undo': Remove the most recently scanned item")
         print("'exit': Exit the program")
     else:
