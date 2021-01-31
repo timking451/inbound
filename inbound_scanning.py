@@ -39,17 +39,6 @@ def main(df, scanned_items):
             opti_report(df)    
         elif scanned == "check":
             check(df, scanned_items)
-            #print("Please scan the item you wish to check")
-            #check = input()
-            #check = check.lstrip("0")
-            #c = col.Counter(scanned_items)
-            # # MAP the c values onto the Count column
-            #df['Count'] = df['UPC'].map(c)
-            #print("*************************************")
-            #print("Here's what I know about that item:")
-            #a = df.loc[df.index[df['UPC'] == check]].transpose()
-            #pprint.pprint(a)
-            #print("*************************************")
         elif scanned == "undo":
             scanned_items.pop()
             print("Item removed")    
@@ -61,24 +50,7 @@ def main(df, scanned_items):
             print("'undo': Remove the most recently scanned item")
             print("'exit': Exit the program")
         else:
-            try:
-                scanned_items.append(scanned)
-                #df['Count'][df['UPC'] == scanned] = scanned_items.count(scanned)
-                # c is a Counter object, counting occurences of each UPC in scanned_items
-                # it is a dictionary with the UPC as the key and the count as the value
-                c = col.Counter(scanned_items)
-                # MAP the c values onto the Count column
-                df['Count'] = df['UPC'].map(c)
-                # Reset everything to strings to help with later equivalency tests
-                df = df.astype(str)
-                a = df.loc[df.index[df['UPC'] == scanned]].transpose()
-                pprint.pprint(a)
-                #print(f"Item count: {scanned_items.count(scanned)}")
-                if len(scanned_items)%5 == 0:
-                    save_scans(scanned_items)
-                #playsound('beep.wav')
-            except ValueError:
-                print("That item is not expected.")
+            new_item(scanned)
 
     # This is how you iterate over a dataframe.
     # Don't forget to use the .index on your dataframe when initializing
@@ -92,6 +64,26 @@ def main(df, scanned_items):
             df['OK'][ind] = "OK"
 
     #Export one big excel file with filters and formatting
+
+def new_item(scanned):
+    scanned_items.append(scanned)
+    #df['Count'][df['UPC'] == scanned] = scanned_items.count(scanned)
+    # c is a Counter object, counting occurences of each UPC in scanned_items
+    # it is a dictionary with the UPC as the key and the count as the value
+    c = col.Counter(scanned_items)
+    # MAP the c values onto the Count column
+    df['Count'] = df['UPC'].map(c)
+    # Reset everything to strings to help with later equivalency tests
+    df = df.astype(str)
+    a = df.loc[df.index[df['UPC'] == scanned]].transpose()
+    pprint.pprint(a)
+    #print(f"Item count: {scanned_items.count(scanned)}")
+    if len(scanned_items)%5 == 0:
+        save_scans(scanned_items)
+    #playsound('beep.wav')
+    
+
+
 
 def save_scans(data):
     shelfFile = shelve.open('scanned_items')
