@@ -46,11 +46,11 @@ def main(df, scanned_items):
             print("'load': Load the previously saved scanned items list")
             print("'totes': Generate the totes report")
             print("'optis': Generate the optis report")
-    #        print("'check': Check the status of an item")
+            print("'check': Check the status of an item")
             print("'undo': Remove the most recently scanned item")
             print("'exit': Exit the program")
         else:
-            new_item(scanned)
+            new_item(df, scanned)
 
     # This is how you iterate over a dataframe.
     # Don't forget to use the .index on your dataframe when initializing
@@ -65,25 +65,20 @@ def main(df, scanned_items):
 
     #Export one big excel file with filters and formatting
 
-def new_item(scanned):
+def new_item(df, scanned):
     scanned_items.append(scanned)
-    #df['Count'][df['UPC'] == scanned] = scanned_items.count(scanned)
     # c is a Counter object, counting occurences of each UPC in scanned_items
     # it is a dictionary with the UPC as the key and the count as the value
     c = col.Counter(scanned_items)
     # MAP the c values onto the Count column
     df['Count'] = df['UPC'].map(c)
     # Reset everything to strings to help with later equivalency tests
-    df = df.astype(str)
+    #df = df.astype(str)
     a = df.loc[df.index[df['UPC'] == scanned]].transpose()
     pprint.pprint(a)
-    #print(f"Item count: {scanned_items.count(scanned)}")
     if len(scanned_items)%5 == 0:
         save_scans(scanned_items)
     #playsound('beep.wav')
-    
-
-
 
 def save_scans(data):
     shelfFile = shelve.open('scanned_items')
@@ -111,8 +106,9 @@ def check(df, scanned_items):
 def tote_report(df):
     df_tote = df.copy(deep=True)
     for ind in df_tote.index:
-        if df_tote['OrderQty'][ind] > df_tote['Count'][ind]:
-            df_tote['OK'][ind] = "SHORT"
+        if int(df_tote['OrderQty'][ind]) > int(df_tote['Count'][ind]):
+            #df_tote['OK'][ind] = "SHORT"
+            df_tote.loc[ind, 'OK'] = 'SHORT'
         elif df_tote['OrderQty'][ind] < df_tote['Count'][ind]:
             df_tote['OK'][ind] = "OVER"
         else:
@@ -129,8 +125,8 @@ def tote_report(df):
 def opti_report(df):
     df_opti = df.copy(deep=True)
     for ind in df_opti.index:
-        if df_opti['OrderQty'][ind] > df_opti['Count'][ind]:
-            df_opti['OK'][ind] = "SHORT"
+        if int(df_opti['OrderQty'][ind]) > int(df_opti['Count'][ind]):
+            df_opti.loc[ind, 'OK'] = 'SHORT'
         elif df_opti['OrderQty'][ind] < df_opti['Count'][ind]:
             df_opti['OK'][ind] = "OVER"
         else:
