@@ -7,6 +7,7 @@ import re
 import shelve
 import pprint
 import os
+import sys
 #from playsound import playsound
 
 os.system("rclone copy dropbox:inbound ~/dropbox")
@@ -30,7 +31,7 @@ def main(df, scanned_items):
         scanned = input()
         scanned = scanned.lstrip('0')
         if scanned == 'exit':
-            break
+            sys.exit()
         elif scanned == 'load':
             scanned_items = load_scans()
         elif scanned == 'totes':
@@ -51,19 +52,6 @@ def main(df, scanned_items):
             print("'exit': Exit the program")
         else:
             new_item(df, scanned)
-
-    # This is how you iterate over a dataframe.
-    # Don't forget to use the .index on your dataframe when initializing
-    # the for loop.
-    for ind in df.index:
-        if df['OrderQty'][ind] > df['Count'][ind]:
-            df['OK'][ind] = "SHORT"
-        elif df['OrderQty'][ind] < df['Count'][ind]:
-            df['OK'][ind] = "OVER"
-        else:
-            df['OK'][ind] = "OK"
-
-    #Export one big excel file with filters and formatting
 
 def new_item(df, scanned):
     scanned_items.append(scanned)
