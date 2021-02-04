@@ -36,7 +36,7 @@ def click_ok(df, scanned):
     # Reset everything to strings to help with later equivalency tests
     #df = df.astype(str)
     a = df.loc[df.index[df['UPC'] == scanned]].transpose()
-    pprint.pprint(a)
+    #pprint.pprint(a)
     if len(scanned_items)%5 == 0:
         save_scans(scanned_items)
     #playsound('beep.wav')
@@ -70,10 +70,47 @@ def check(df, scanned_items):
     pprint.pprint(a)
     print("*************************************")
 
+def tote_report(df):
+    df_tote = df.copy(deep=True)
+    for ind in df_tote.index:
+        if int(df_tote['OrderQty'][ind]) > int(df_tote['Count'][ind]):
+            #df_tote['OK'][ind] = "SHORT"
+            df_tote.loc[ind, 'OK'] = 'SHORT'
+        elif int(df_tote['OrderQty'][ind]) < int(df_tote['Count'][ind]):
+            df_tote.loc[ind, 'OK'] = "OVER"
+        else:
+            df_tote.loc[ind, 'OK'] = "OK"
+
+    df_tote = df_tote.drop(df_tote[df_tote['OK'] == 'OK'].index)
+    df_tote['UPC'] = ''
+    df_tote.sort_values(by=['OK'])
+    tote = re.compile(r'^T')
+    df_tote = df_tote[df_tote['Deliverable Unit'].str.match(tote) == True]
+    df_tote.to_excel('~/dropbox/tote_report.xlsx') 
+    os.system("rclone copy ~/dropbox dropbox:inbound")
+
+def opti_report(df):
+    df_opti = df.copy(deep=True)
+    for ind in df_opti.index:
+        if int(df_opti['OrderQty'][ind]) > int(df_opti['Count'][ind]):
+            df_opti.loc[ind, 'OK'] = 'SHORT'
+        elif int(df_opti['OrderQty'][ind]) < int(df_opti['Count'][ind]):
+            df_opti.loc[ind, 'OK'] = "OVER"
+        else:
+            df_opti.loc[ind, 'OK'] = "OK"
+
+    df_opti = df_opti.drop(df_opti[df_opti['OK'] == 'OK'].index)
+    df_opti['UPC'] = ''
+    df_opti.sort_values(by=['OK'])
+    opti = re.compile(r'^\d')
+    df_opti = df_opti[df_opti['Deliverable Unit'].str.match(opti) == True]
+    df_opti.to_excel('~/dropbox/opti_report.xlsx') 
+    os.system("rclone copy ~/dropbox dropbox:inbound")
+
 
 layout = [[sg.Text('Please scan an item')], 
           [sg.Input(do_not_clear=False, key='-IN-')],       
-          [sg.Multiline('', size=(45, 9), key='-OUT-', auto_refresh=True)], 
+          [sg.Multiline('', size=(45, 9), font='Arial 30', key='-OUT-', auto_refresh=True)], 
           [sg.Ok(), sg.Button('Check'),      
           sg.Button('Remove'), sg.Button('Tote Report'),
           sg.Button('Opti Report')]]
@@ -90,8 +127,12 @@ while True:
         click_check()
     elif event == 'Ok':
         click_ok(df, values['-IN-'])
-    if event == 'Remove':
+    elif event == 'Remove':
         break
+    elif event == 'Tote Report':
+        tote_report(df)
+    elif event == 'Opti Report':
+        opti_report(df)
 window.close()
 
 
