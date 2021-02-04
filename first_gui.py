@@ -26,7 +26,7 @@ scanned_items = [] # Create empty list for UPC scans
 
 
 def click_ok(df, scanned):
-    scanned = scanned.astype(str).lstrip('0)')
+    scanned = scanned.lstrip('0)')
     scanned_items.append(scanned)
     # c is a Counter object, counting occurences of each UPC in scanned_items
     # it is a dictionary with the UPC as the key and the count as the value
@@ -73,7 +73,7 @@ def check(df, scanned_items):
 
 layout = [[sg.Text('Please scan an item')], 
           [sg.Input(do_not_clear=False, key='-IN-')],       
-          [sg.Multiline('', size=(45, 7), key='-OUT-', auto_refresh=True)], 
+          [sg.Multiline('', size=(45, 9), key='-OUT-', auto_refresh=True)], 
           [sg.Ok(), sg.Button('Check'),      
           sg.Button('Remove'), sg.Button('Tote Report'),
           sg.Button('Opti Report')]]
