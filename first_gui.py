@@ -56,21 +56,30 @@ def load_scans():
     shelfFile = shelve.open('scanned_items')
     return shelfFile['scanned_items']
 
-def check(df, scanned_items):
+def check(df, scanned):
+    event, values = window_check.read()
     df_check = df.copy(deep=True)
-    print("Please scan the item you wish to check")
-    check = input()
-    check = check.lstrip("0")
+    window_check['-OUT-'].Update("Please scan the item you wish to check")
+    scanned = scanned.lstrip('0)')
+    # c is a Counter object, counting occurences of each UPC in scanned_items
+    # it is a dictionary with the UPC as the key and the count as the value
     c = col.Counter(scanned_items)
     # MAP the c values onto the Count column
-    df_check['Count'] = df_check['UPC'].map(c)
-    print("*************************************")
-    print("Here's what I know about that item:")
-    a = df_check.loc[df_check.index[df_check['UPC'] == check]].transpose()
-    pprint.pprint(a)
-    print("*************************************")
+    df['Count'] = df['UPC'].map(c)
+    # Reset everything to strings to help with later equivalency tests
+    #df = df.astype(str)
+    a = df.loc[df.index[df['UPC'] == scanned]].transpose()
+    #pprint.pprint(a)
+    #playsound('beep.wav')
+    #window['-OUT-'].Update(a)
+    #print("*************************************")
+    #print("Here's what I know about that item:")
+    #a = df_check.loc[df_check.index[df_check['UPC'] == check]].transpose()
+    #pprint.pprint(a)
+    #print("*************************************")
 
 def tote_report(df):
+    window['-OUT-'].Update('Generating Tote Report. Please wait.')
     df_tote = df.copy(deep=True)
     for ind in df_tote.index:
         if int(df_tote['OrderQty'][ind]) > int(df_tote['Count'][ind]):
@@ -88,8 +97,10 @@ def tote_report(df):
     df_tote = df_tote[df_tote['Deliverable Unit'].str.match(tote) == True]
     df_tote.to_excel('~/dropbox/tote_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
+    window['-OUT-'].Update('Tote Report is ready.')
 
 def opti_report(df):
+    window['-OUT-'].Update('Generating Opti Report. Please wait.')
     df_opti = df.copy(deep=True)
     for ind in df_opti.index:
         if int(df_opti['OrderQty'][ind]) > int(df_opti['Count'][ind]):
@@ -106,6 +117,8 @@ def opti_report(df):
     df_opti = df_opti[df_opti['Deliverable Unit'].str.match(opti) == True]
     df_opti.to_excel('~/dropbox/opti_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
+    window['-OUT-'].Update('Opti Report is ready.')
+
 
 
 layout = [[sg.Text('Please scan an item')], 
@@ -115,16 +128,19 @@ layout = [[sg.Text('Please scan an item')],
           sg.Button('Remove'), sg.Button('Tote Report'),
           sg.Button('Opti Report')]]
 
-layout_check = [[sg.Text('Here\'s what I know about that                     item:')],
-                [sg.Multiline('Boop', size=(45,5))],
-                [sg.Ok()]]
+layout_check = [[sg.Text('Scan the item you wish to check')],
+                [sg.Input(do_not_clear=False, key='-IN-')],
+                [sg.Multiline('', size=(30, 9), font='Arial 15', key='-OUT-', auto_refresh=True)], 
+                [sg.Button('Ok'), sg.Button('Exit')]]
 
 window = sg.Window('Inbound Scanning', layout)
+
+window_check = sg.Window('CHECK', layout_check)
 
 while True:
     event, values = window.read()
     if event == 'Check':
-        click_check()
+        check(df, values['-IN-'])
     elif event == 'Ok':
         click_ok(df, values['-IN-'])
     elif event == 'Remove':
