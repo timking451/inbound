@@ -40,13 +40,13 @@ def click_ok(df, scanned):
     if len(scanned_items)%5 == 0:
         save_scans(scanned_items)
     #playsound('beep.wav')
-    window['-OUT-'].Update('')
-    window['-OUT-'].print(a)
+    window['-OUT-'].Update(a)
 
 def click_check():
-    window['-OUT-'].Update('')
-    window['-OUT-'].print('you clicked check.')
-
+    pass
+    #window['-OUT-'].Update('')
+    #window['-OUT-'].print('you clicked check.')
+    
 def save_scans(data):
     shelfFile = shelve.open('scanned_items')
     shelfFile['scanned_items'] = data
@@ -133,6 +133,8 @@ while True:
         tote_report(df)
     elif event == 'Opti Report':
         opti_report(df)
+    elif event == sg.WIN_CLOSED:
+        break
 window.close()
 
 
