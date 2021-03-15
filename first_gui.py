@@ -79,7 +79,7 @@ def check(df, scanned):
     #print("*************************************")
 
 def tote_report(df):
-    window['-OUT-'].Update('Generating Tote Report. Please wait.')
+    window['-OUT-'].Update('\n\n\nGenerating Tote Report.\n Please wait...', justification='center')
     df_tote = df.copy(deep=True)
     for ind in df_tote.index:
         if int(df_tote['OrderQty'][ind]) > int(df_tote['Count'][ind]):
@@ -97,7 +97,7 @@ def tote_report(df):
     df_tote = df_tote[df_tote['Deliverable Unit'].str.match(tote) == True]
     df_tote.to_excel('~/dropbox/tote_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
-    window['-OUT-'].Update('Tote Report is ready.')
+    window['-OUT-'].Update('\n\n\n\nTote Report is ready.', justification='center')
 
 def opti_report(df):
     window['-OUT-'].Update('Generating Opti Report. Please wait.')
