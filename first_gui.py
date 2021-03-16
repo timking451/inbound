@@ -54,7 +54,7 @@ def load_scans():
 def check(df):
     layout = [[sg.Text('Scan the item you wish to check')],
             [sg.Input(do_not_clear=False, key='-IN-')],
-            [sg.Multiline("Please scan the item you wish to check", size=(40, 9), font='Arial 15', key='-OUT-', auto_refresh=True)], 
+            [sg.Multiline("\n\n\nPlease scan the item you wish to check", size=(50, 9), font='Arial 15', key='-OUT-', auto_refresh=True, justification="center")], 
             [sg.Ok(), sg.Button('Exit')]]
     
     window = sg.Window('CHECK', layout, modal=True)
@@ -76,7 +76,7 @@ def check(df):
 
 
 def tote_report(df):
-    window['-OUT-'].Update('Generating Tote Report. Please wait.')
+    window['-OUT-'].Update('\n\n\nGenerating Tote Report.\nPlease wait...', justification='center')
     df_tote = df.copy(deep=True)
     for ind in df_tote.index:
         if int(df_tote['OrderQty'][ind]) > int(df_tote['Count'][ind]):
@@ -94,10 +94,10 @@ def tote_report(df):
     df_tote = df_tote[df_tote['Deliverable Unit'].str.match(tote) == True]
     df_tote.to_excel('~/dropbox/tote_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
-    window['-OUT-'].Update('Tote Report is ready.\n You may continue scanning.', justification='center')
+    window['-OUT-'].Update('\n\n\nTote Report is ready.\n You may continue scanning.', justification='center')
 
 def opti_report(df):
-    window['-OUT-'].Update('Generating Opti Report. Please wait.')
+    window['-OUT-'].Update('\n\n\nGenerating Opti Report.\nPlease wait...', justification='center')
     df_opti = df.copy(deep=True)
     for ind in df_opti.index:
         if int(df_opti['OrderQty'][ind]) > int(df_opti['Count'][ind]):
@@ -114,7 +114,7 @@ def opti_report(df):
     df_opti = df_opti[df_opti['Deliverable Unit'].str.match(opti) == True]
     df_opti.to_excel('~/dropbox/opti_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
-    window['-OUT-'].Update('Opti Report is ready.')
+    window['-OUT-'].Update('\n\n\nOpti Report is ready.\nYou may continue scanning.', justification='center')
 
 layout = [[sg.Text('Please scan an item')], 
           [sg.Input(do_not_clear=False, key='-IN-')],       
