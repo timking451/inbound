@@ -54,7 +54,7 @@ def load_scans():
 def check(df):
     layout = [[sg.Text('Scan the item you wish to check')],
             [sg.Input(do_not_clear=False, key='-IN-')],
-            [sg.Multiline("\n\n\nPlease scan the item you wish to check", size=(50, 9), font='Arial 15', key='-OUT-', auto_refresh=True, justification="center")], 
+            [sg.Multiline("\n\n\nPlease scan the item you wish to check", size=(50, 9), font='Arial 15', key='-OUT-', auto_refresh=True)], 
             [sg.Ok(), sg.Button('Exit')]]
     
     window = sg.Window('CHECK', layout, modal=True)
