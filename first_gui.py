@@ -40,7 +40,7 @@ def click_ok(df, scanned):
     if len(scanned_items)%5 == 0:
         save_scans(scanned_items)
     #playsound('beep.wav')
-    window['-OUT-'].Update(a)
+    return a
 
 def click_check():
     pass
@@ -97,7 +97,7 @@ def tote_report(df):
     df_tote = df_tote[df_tote['Deliverable Unit'].str.match(tote) == True]
     df_tote.to_excel('~/dropbox/tote_report.xlsx') 
     os.system("rclone copy ~/dropbox dropbox:inbound")
-    window['-OUT-'].Update('\n\n\n\nTote Report is ready.', justification='center')
+    window['-OUT-'].Update('Tote Report is ready.\n You may continue scanning.', justification='center')
 
 def opti_report(df):
     window['-OUT-'].Update('Generating Opti Report. Please wait.')
