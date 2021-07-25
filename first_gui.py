@@ -8,7 +8,6 @@ import shelve
 import pprint
 import os
 import sys
-#from playsound import playsound
 
 os.system("rclone copy dropbox:inbound ~/dropbox")
 
@@ -20,10 +19,7 @@ df['Count'] = ""
 df['OK'] = "---"
 df = df.sort_values(by=['Deliverable Unit'], ascending=False)
 
-#os.system("^C") # Is this really necessary?
-
 scanned_items = [] # Create empty list for UPC scans
-
 
 def click_ok(df, scanned):
     scanned = scanned.lstrip('0)')
@@ -33,13 +29,9 @@ def click_ok(df, scanned):
     c = col.Counter(scanned_items)
     # MAP the c values onto the Count column
     df['Count'] = df['UPC'].map(c)
-    # Reset everything to strings to help with later equivalency tests
-    #df = df.astype(str)
     a = df.loc[df.index[df['UPC'] == scanned]].transpose()
-    #pprint.pprint(a)
-    if len(scanned_items)%5 == 0:
-        save_scans(scanned_items)
-    #playsound('beep.wav')
+    #if len(scanned_items)%5 == 0:
+     #   save_scans(scanned_items)
     window['-OUT-'].Update(a)
 
 def save_scans(data):
@@ -76,15 +68,10 @@ def check(df):
 
 
 def tote_report(df):
-<<<<<<< HEAD
-    window['-OUT-'].Update('\n\n\nGenerating Tote Report.\n Please wait...', justification='center')
-=======
     window['-OUT-'].Update('\n\n\nGenerating Tote Report.\nPlease wait...', justification='center')
->>>>>>> cfe17160d75ae28d1abf4f2619f3ffb5702ac0f0
     df_tote = df.copy(deep=True)
     for ind in df_tote.index:
         if int(df_tote['OrderQty'][ind]) > int(df_tote['Count'][ind]):
-            #df_tote['OK'][ind] = "SHORT"
             df_tote.loc[ind, 'OK'] = 'SHORT'
         elif int(df_tote['OrderQty'][ind]) < int(df_tote['Count'][ind]):
             df_tote.loc[ind, 'OK'] = "OVER"
@@ -120,8 +107,10 @@ def opti_report(df):
     os.system("rclone copy ~/dropbox dropbox:inbound")
     window['-OUT-'].Update('\n\n\nOpti Report is ready.\nYou may continue scanning.', justification='center')
 
-layout = [[sg.Text('Please scan an item')], 
-          [sg.Input(do_not_clear=False, key='-IN-')],       
+#col = [sg.Multiline('', size=(30, 60), font='Arial 8', key='-LOG-', auto_refresh=False)]
+
+layout = [[sg.Text('Please scan an item')], #sg.Column(col)],
+          [sg.Input(do_not_clear=False, key='-IN-')], #sg.Multiline('', size=(30, 60), font='Arial 8', key='-LOG-', auto_refresh=False)],      
           [sg.Multiline('', size=(45, 9), font='Arial 30', key='-OUT-', auto_refresh=True)], 
           [sg.Ok(), sg.Button('Check'),      
           sg.Button('Remove'), sg.Button('Tote Report'),
@@ -146,38 +135,3 @@ while True:
         break
 window.close()
 
-
-"""
-def click_ok():
-    window['-OUT-'].Update('')
-    window['-OUT-'].print('you clicked ok!')
-
-def click_check():
-    window['-OUT-'].Update('')
-    window['-OUT-'].print('you clicked check.')
-
-layout = [[sg.Text('Please scan an item')], 
-          [sg.Input(do_not_clear=False)],       
-          [sg.Multiline('', size=(45, 7), key='-OUT-', auto_refresh=True)], 
-          [sg.Ok(), sg.Button('Check'),      
-          sg.Button('Remove'), sg.Button('Tote Report'),
-          sg.Button('Opti Report')]]
-
-layout_check = [[sg.Text('Here\'s what I know about that                     item:')],
-                [sg.Multiline('Boop', size=(45,5))],
-                [sg.Ok()]]
-
-window = sg.Window('Inbound Scanning', layout)
-
-while True:
-    event, values = window.read()
-    if event == 'Check':
-        click_check()
-    elif event == 'Ok':
-        click_ok()
-    elif event == 'Remove':
-        break
-window.close()
-
-sg.Popup(event, values[0])
-"""
